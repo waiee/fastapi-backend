@@ -4,4 +4,9 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return("Cubaan 1 2 3 testing bismillah")
+    return{"Testing": "123"}
+
+@app.post("/items")
+def create_item(items:str):
+    items.append(items)
+    return items
