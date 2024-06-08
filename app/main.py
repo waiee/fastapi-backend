@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from gradio_client import Client
-import json
 
 app = FastAPI()
+
+# Initialize the client with the app name
 client = Client("anasmarz/penat")
 
+# Define the request model for the /predict endpoint
 class PredictRequest(BaseModel):
     market_sector: str
     target_market: str
@@ -17,32 +19,38 @@ class PredictRequest(BaseModel):
     top_p: float
     repetition_penalty: float
 
-@app.post("/submit")
-async def submit_form(request: PredictRequest):
-    # Call the /lambda endpoint
-    lambda_response = client.predict(api_name="/lambda")
+@app.get("/lambda")
+def call_lambda():
+    try:
+        lambda_response = client.predict(api_name="/lambda")
+        return {"lambda_response": lambda_response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Call the /predict endpoint with parameters from the request
-    predict_response = client.predict(
-        request.market_sector,
-        request.target_market,
-        request.revenue_stream,
-        request.budget,
-        request.technology_used,
-        request.temperature,
-        request.max_new_tokens,
-        request.top_p,
-        request.repetition_penalty,
-        api_name="/predict"
-    )
+@app.post("/predict")
+def call_predict(request: PredictRequest):
+    try:
+        predict_response = client.predict(
+            market_sector=request.market_sector,
+            target_market=request.target_market,
+            revenue_stream=request.revenue_stream,
+            budget=request.budget,
+            technology_used=request.technology_used,
+            temperature=request.temperature,
+            max_new_tokens=request.max_new_tokens,
+            top_p=request.top_p,
+            repetition_penalty=request.repetition_penalty,
+            api_name="/predict"
+        )
+        
+        return {"predict_response": predict_response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Call the /cleanup endpoint
-    cleanup_response = client.predict(api_name="/cleanup")
-
-    # Prepare the JSON response
-    response = {
-        "lambda_response": lambda_response,
-        "predict_response": predict_response,
-        "cleanup_response": cleanup_response
-    }
-    return json.loads(json.dumps(response))
+@app.get("/cleanup")
+def call_cleanup():
+    try:
+        cleanup_response = client.predict(api_name="/cleanup")
+        return {"cleanup_response": cleanup_response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
