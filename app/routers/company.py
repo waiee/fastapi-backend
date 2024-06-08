@@ -44,31 +44,62 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
 
-gradio_client = Client("anasmarz/startupchatbot")
+# gradio_client = Client("anasmarz/startupchatbot")
 
-@router.post("/", response_model=schemas.Company)
-async def create_company_and_predict(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
-    new_company = crud.create_company(db=db, company=company)
+# @router.post("/", response_model=schemas.Company)
+# async def create_company_and_predict(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
+#     new_company = crud.create_company(db=db, company=company)
     
-    # Pass company details to Gradio client for prediction
-    gradio_output = gradio_client.predict(
-        message=company.description,
-        # Pass additional parameters as needed
-    )
+#     # Pass company details to Gradio client for prediction
+#     gradio_output = gradio_client.predict(
+#         message=company.description,
+#         # Pass additional parameters as needed
+#     )
     
-    if not gradio_output:
-        raise HTTPException(status_code=500, detail="Failed to get prediction from Gradio")
+#     if not gradio_output:
+#         raise HTTPException(status_code=500, detail="Failed to get prediction from Gradio")
     
-    # Convert Gradio output to JSON
-    gradio_output_json = {
-        "prediction": gradio_output
-    }
+#     # Convert Gradio output to JSON
+#     gradio_output_json = {
+#         "prediction": gradio_output
+#     }
     
-    # Pass JSON to frontend
-    return {
-        "company_details": new_company,
-        "prediction": gradio_output_json
-    }
+#     # Pass JSON to frontend
+#     return {
+#         "company_details": new_company,
+#         "prediction": gradio_output_json
+#     }
+
+router = APIRouter()
+gradio_client = Client("anasmarz/penat")
+
+@router.post("/predict")
+async def predict(
+    market_sector: str,
+    target_market: str,
+    revenue_stream: str,
+    budget: str,
+    technology_used: str,
+    temperature: float = 0.9,
+    max_new_tokens: int = 256,
+    top_p: float = 0.9,
+    repetition_penalty: float = 1.2
+):
+    try:
+        result = gradio_client.predict(
+            market_sector=market_sector,
+            target_market=target_market,
+            revenue_stream=revenue_stream,
+            budget=budget,
+            technology_used=technology_used,
+            temperature=temperature,
+            max_new_tokens=max_new_tokens,
+            top_p=top_p,
+            repetition_penalty=repetition_penalty
+        )
+        return {"result": result}
+    except Exception as e:
+        return {"error": str(e)}
 
 @router.post("/", response_model=schemas.Company)
 async def create_company(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
