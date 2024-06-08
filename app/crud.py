@@ -10,7 +10,8 @@ def create_company(db: Session, company: schemas.CompanyCreate):
         description=company.description,
         target_market=company.target_market,   # New field
         technology=company.technology,         # New field
-        revenue_stream=company.revenue_stream  # New field
+        revenue_stream=company.revenue_stream,  # New field
+        budget=company.budget
     )
     db.add(db_company)
     db.commit()

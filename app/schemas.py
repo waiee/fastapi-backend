@@ -10,6 +10,7 @@ class CompanyBase(BaseModel):
     target_market: Optional[str] = None   # New field
     technology: Optional[str] = None      # New field
     revenue_stream: Optional[str] = None  # New field
+    budget: int
 
 class CompanyCreate(CompanyBase):
     pass
@@ -23,6 +24,7 @@ class CompanyUpdate(BaseModel):
     target_market: Optional[str] = None   # New field
     technology: Optional[str] = None      # New field
     revenue_stream: Optional[str] = None  # New field
+    budget: Optional[int] = None
 
 class Company(CompanyBase):
     id: int
