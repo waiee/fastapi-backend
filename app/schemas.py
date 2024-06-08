@@ -31,7 +31,7 @@ class Company(CompanyBase):
 
     class Config:
         orm_mode = True
-        
+
 class PredictionResult(BaseModel):
     market_sector: str
     target_market: str
@@ -42,3 +42,4 @@ class PredictionResult(BaseModel):
     max_new_tokens: int
     top_p: float
     repetition_penalty: float
+
