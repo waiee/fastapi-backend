@@ -1,43 +1,38 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_company(db: Session, company_id: int):
+    return db.query(models.Company).filter(models.Company.id == company_id).first()
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_companies(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Company).offset(skip).limit(limit).all()
 
-def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user)
+def create_company(db: Session, company: schemas.CompanyCreate):
+    db_company = models.Company(
+        name=company.name,
+        sector=company.sector,
+        location=company.location,
+        established_year=company.established_year,
+        description=company.description,
+    )
+    db.add(db_company)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_company)
+    return db_company
 
-def update_user_sensitive(db: Session, user_id: int, user_update: schemas.UserUpdateSensitive):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
+def update_company(db: Session, company_id: int, company_update: schemas.CompanyUpdate):
+    db_company = db.query(models.Company).filter(models.Company.id == company_id).first()
+    if not db_company:
         return None
-    for key, value in user_update.dict(exclude_unset=True).items():
-        setattr(db_user, key, value)
+    for key, value in company_update.dict(exclude_unset=True).items():
+        setattr(db_company, key, value)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_company)
+    return db_company
 
-def update_user_nonsensitive(db: Session, user_id: int, user_update: schemas.UserUpdateNonSensitive):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        return None
-    for key, value in user_update.dict(exclude_unset=True).items():
-        setattr(db_user, key, value)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-def delete_user(db: Session, user_id: int):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user:
-        db.delete(db_user)
+def delete_company(db: Session, company_id: int):
+    db_company = db.query(models.Company).filter(models.Company.id == company_id).first()
+    if db_company:
+        db.delete(db_company)
         db.commit()
-    return db_user
+    return db_company

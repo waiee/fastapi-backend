@@ -7,19 +7,15 @@ DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-class User(Base):
-    __tablename__ = "users"
+class Company(Base):
+    __tablename__ = "companies"
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    username = Column(String, index=True)
-    hashed_password = Column(String)
-    company_name = Column(String, index=True, nullable=True)
-    company_sector = Column(String, nullable=True)
-    location = Column(String, nullable=True)
-    established_year = Column(Integer, nullable=True)
-    description = Column(String, nullable=True)
+    name = Column(String, index=True)
+    sector = Column(String, index=True)
+    location = Column(String, index=True)
+    established_year = Column(Integer)
+    description = Column(String)
 
 
 Base.metadata.create_all(engine)
-

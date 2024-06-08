@@ -1,31 +1,25 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class UserBase(BaseModel):
-    email: str
+class CompanyBase(BaseModel):
+    name: str
+    sector: str
+    location: str
+    established_year: int
+    description: Optional[str] = None
 
-class UserCreate(UserBase):
-    password: str
+class CompanyCreate(CompanyBase):
+    pass
 
-class UserUpdateSensitive(BaseModel):
-    email: Optional[str] = None
-    password: Optional[str] = None
-
-class UserUpdateNonSensitive(BaseModel):
-    company_name: Optional[str] = None
-    company_sector: Optional[str] = None
+class CompanyUpdate(CompanyBase):
+    name: Optional[str] = None
+    sector: Optional[str] = None
     location: Optional[str] = None
     established_year: Optional[int] = None
     description: Optional[str] = None
 
-class User(UserBase):
+class Company(CompanyBase):
     id: int
-    username: Optional[str] = None
-    company_name: Optional[str] = None
-    company_sector: Optional[str] = None
-    location: Optional[str] = None
-    established_year: Optional[int] = None
-    description: Optional[str] = None
 
     class Config:
         orm_mode = True
