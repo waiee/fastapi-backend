@@ -172,5 +172,7 @@ data = {
 async def get_data():
     return data
 
-
+@app.get("/", tags=["Root"])
+async def hello():
+    return {"hello": "anjing la vercel"}
 
