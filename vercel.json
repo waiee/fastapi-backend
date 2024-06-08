@@ -12,7 +12,7 @@
     "routes": [
         {
             "src":"/(.*)",
-            "use":"app/api.py"
+            "use":"app/main.py"
         }
     ]
 }
