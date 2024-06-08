@@ -45,10 +45,7 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
 
-router = APIRouter()
-gradio_client = Client("anasmarz/penat")
-
-@router.post("/predict")
+@router.post("/predict", response_model=PredictionResult)
 async def predict(
     sector: str,
     target_market: str,
@@ -60,35 +57,13 @@ async def predict(
     top_p: float = 0.9,
     repetition_penalty: float = 1.2
 ):
+    # Your prediction logic here
     prediction_result = {
         "sector": sector,
         "target_market": target_market,
         "revenue_stream": revenue_stream,
         "budget": budget,
         "technology": technology,
-        "temperature": temperature,
-        "max_new_tokens": max_new_tokens,
-        "top_p": top_p,
-        "repetition_penalty": repetition_penalty
-    }
-    return prediction_result
-
-@router.post("/", response_model=schemas.Company)
-async def create_company(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
-    return crud.create_company(db=db, company=company)
-
-@router.post("/predict", response_model=PredictionResult)
-async def predict_from_gradio(market_sector: str, target_market: str, revenue_stream: str, budget: str, technology_used: str, temperature: float, max_new_tokens: int, top_p: float, repetition_penalty: float):
-    """
-    Endpoint to receive input from the Gradio client and perform prediction.
-    """
-    # Your prediction logic here
-    prediction_result = {
-        "market_sector": market_sector,
-        "target_market": target_market,
-        "revenue_stream": revenue_stream,
-        "budget": budget,
-        "technology_used": technology_used,
         "temperature": temperature,
         "max_new_tokens": max_new_tokens,
         "top_p": top_p,

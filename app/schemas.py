@@ -31,3 +31,14 @@ class Company(CompanyBase):
 
     class Config:
         orm_mode = True
+        
+class PredictionResult(BaseModel):
+    market_sector: str
+    target_market: str
+    revenue_stream: str
+    budget: str
+    technology_used: str
+    temperature: float
+    max_new_tokens: int
+    top_p: float
+    repetition_penalty: float

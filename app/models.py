@@ -17,14 +17,3 @@ class Company(Base):
     technology = Column(String, index=True)     
     revenue_stream = Column(String, index=True)
     budget = Column(Integer, index=True)   
-
-class PredictionResult(BaseModel):
-    market_sector: str
-    target_market: str
-    revenue_stream: str
-    budget: str
-    technology_used: str
-    temperature: float
-    max_new_tokens: int
-    top_p: float
-    repetition_penalty: float
