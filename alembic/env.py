@@ -3,14 +3,10 @@ from sqlalchemy import create_engine
 from sqlalchemy import pool
 from alembic import context
 
-# this is the Alembic Config object, which provides access to the values within the .ini file in use.
 config = context.config
-
-# Interpret the config file for Python logging.
 fileConfig(config.config_file_name)
 
-# add your model's MetaData object here for 'autogenerate' support
-from app.models import Base  # Adjust the import to your project's structure
+from app.models import Base
 target_metadata = Base.metadata
 
 def run_migrations_offline():
