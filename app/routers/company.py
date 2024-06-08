@@ -2,20 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app import crud, schemas, dependencies
-from app.dependencies import SessionLocal
+from app.dependencies import get_db
 from gradio_client import Client
 import json
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-@@router.post("/predict_and_create_company", response_model=schemas.GradioOutput)
+@router.post("/predict_and_create_company", response_model=schemas.GradioOutput)
 async def predict_and_create_company(
     company: schemas.CompanyCreate,
     db: Session = Depends(get_db)
@@ -30,7 +23,7 @@ async def predict_and_create_company(
         "revenue_stream": company.revenue_stream,
         "budget": company.budget,
         "technology_used": company.technology,
-        "established_year": company.established_year,  # Pass established_year to Gradio
+        "established_year": company.established_year,
         "temperature": 0.9,
         "max_new_tokens": 2048,
         "top_p": 0.9,
@@ -42,21 +35,12 @@ async def predict_and_create_company(
         gradio_client = Client("anasmarz/penat")
         gradio_output = gradio_client.predict(**gradio_params, api_name="/predict")
 
-        # Try to parse the Gradio output from string to JSON
-        try:
-            gradio_output_json = json.loads(gradio_output)
-        except json.JSONDecodeError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to parse Gradio output: {e}")
+        # Print the output from Gradio
+        print("Output from Gradio:")
+        print(gradio_output)
 
-        # Validate the Gradio output JSON in FastAPI Swagger
-        required_fields = ["market_sector", "target_market", "revenue_stream", "budget", "technology_used"]
-        missing_fields = [field for field in required_fields if field not in gradio_output_json]
-
-        if missing_fields:
-            raise HTTPException(status_code=500, detail=f"Gradio output is missing required fields: {missing_fields}")
-
-        # Return the Gradio output as a validated JSON structure
-        return gradio_output_json
+        # Return the output as a string
+        return {"output": gradio_output}
 
     except Exception as e:
         print(f"Error in predict_and_create_company: {e}")

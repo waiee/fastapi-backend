@@ -24,12 +24,7 @@ class Company(CompanyBase):
         orm_mode: True
 
 class GradioOutput(BaseModel):
-    market_sector: str
-    target_market: str
-    revenue_stream: str
-    budget: str
-    technology_used: str
+    output: str  # Assuming the Gradio output is a string, adjust based on actual output structure
 
     class Config:
         orm_mode = True
-
