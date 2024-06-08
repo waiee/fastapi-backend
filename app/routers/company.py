@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from app import crud, schemas, database
+from app import crud, schemas, dependencies
 
 router = APIRouter()
 
 def get_db():
-    db = database.SessionLocal()
+    db = dependencies.SessionLocal()
     try:
         yield db
     finally:
