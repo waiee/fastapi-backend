@@ -13,5 +13,8 @@
             "src":"/(.*)",
             "use":"/app/main.py"
         }
-    ]
+    ],
+    "env": {
+        "APP_MODULE": "main:app"
+    }
 }
