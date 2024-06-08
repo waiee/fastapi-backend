@@ -1,18 +1,18 @@
-// {
-//     "rewrites": [{ "source": "/(.*)", "destination": "/app" }]
-// }
-
 {
-    "builds": [
-        {
-            "src":"/app/main.py",
-            "use":"@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src":"/(.*)",
-            "use":"app/main.py"
-        }
-    ]
+    "rewrites": [{ "source": "/(.*)", "destination": "/app" }]
 }
+
+// {
+//     "builds": [
+//         {
+//             "src":"/app/main.py",
+//             "use":"@vercel/python"
+//         }
+//     ],
+//     "routes": [
+//         {
+//             "src":"/(.*)",
+//             "use":"app/main.py"
+//         }
+//     ]
+// }
