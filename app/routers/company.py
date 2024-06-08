@@ -1,13 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import RequestValidationError
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app import crud, schemas, dependencies
 from app.dependencies import get_db
 from gradio_client import Client
-import json
 import logging
 
 router = APIRouter()
@@ -21,9 +17,11 @@ async def predict_and_create_company(
 ):
     try:
         # Store company details in the database
+        logging.info("Storing company details in the database")
         created_company = crud.create_company(db=db, company=company)
 
         # Extract the necessary parameters for Gradio
+        logging.info("Extracting parameters for Gradio")
         gradio_params = {
             "market_sector": company.sector,
             "target_market": company.target_market,
@@ -36,7 +34,10 @@ async def predict_and_create_company(
             "repetition_penalty": 1.2
         }
 
+        logging.info(f"Gradio parameters: {gradio_params}")
+
         # Pass company details to Gradio for processing
+        logging.info("Passing company details to Gradio")
         gradio_client = Client("anasmarz/penat")
         gradio_output = gradio_client.predict(**gradio_params, api_name="/predict")
 
@@ -44,12 +45,12 @@ async def predict_and_create_company(
         logging.info("Output from Gradio:")
         logging.info(gradio_output)
 
-        # Return the output as a string
+        # Return the output as a JSON response
         return {"output": gradio_output}
 
     except Exception as e:
         logging.error(f"Error in predict_and_create_company: {e}")
-        raise HTTPException(status_code=500, detail="Failed to process Gradio output")
+        raise HTTPException(status_code=500, detail=f"Failed to process Gradio output: {e}")
 
 @router.get("/companies/", response_model=List[schemas.Company])
 def read_companies(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
@@ -76,11 +77,3 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
     if db_company is None:
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
-
-@router.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    logging.error(f"Validation error: {exc}")
-    return JSONResponse(
-        status_code=422,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
-    )
