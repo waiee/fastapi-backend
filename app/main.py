@@ -172,7 +172,10 @@ data = {
 async def get_data():
     return data
 
-@app.get("/", tags=["Root"])
+@app.get('/')
 async def hello():
     return {"hello": "anjing la vercel"}
 
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(main)
