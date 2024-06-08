@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from app import crud, schemas
 from app.dependencies import SessionLocal
+from gradio_client import Client
 
 router = APIRouter()
 
@@ -42,3 +43,22 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
     if db_company is None:
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
+
+@router.post("/gradio/predict")
+async def gradio_predict(message: str, request: str, param_3: str, param_4: int, param_5: float, param_6: float, param_7: int, param_8: float):
+    try:
+        client = Client("anasmarz/startupchatbot")
+        result = client.predict(
+            message=message,
+            request=request,
+            param_3=param_3,
+            param_4=param_4,
+            param_5=param_5,
+            param_6=param_6,
+            param_7=param_7,
+            param_8=param_8,
+            api_name="/chat"
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
