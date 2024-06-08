@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from app import crud, schemas
+from app import crud, schemas, dependencies
 from app.dependencies import SessionLocal
 from gradio_client import Client
 
@@ -44,21 +44,32 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
 
-@router.post("/gradio/predict")
-async def gradio_predict(message: str, request: str, param_3: str, param_4: int, param_5: float, param_6: float, param_7: int, param_8: float):
-    try:
-        client = Client("anasmarz/startupchatbot")
-        result = client.predict(
-            message=message,
-            request=request,
-            param_3=param_3,
-            param_4=param_4,
-            param_5=param_5,
-            param_6=param_6,
-            param_7=param_7,
-            param_8=param_8,
-            api_name="/chat"
-        )
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+gradio_client = Client("anasmarz/startupchatbot")
+
+@router.post("/", response_model=schemas.Company)
+async def create_company_and_predict(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
+    new_company = crud.create_company(db=db, company=company)
+    
+    # Pass company details to Gradio client for prediction
+    gradio_output = gradio_client.predict(
+        message=company.description,
+        # Pass additional parameters as needed
+    )
+    
+    if not gradio_output:
+        raise HTTPException(status_code=500, detail="Failed to get prediction from Gradio")
+    
+    # Convert Gradio output to JSON
+    gradio_output_json = {
+        "prediction": gradio_output
+    }
+    
+    # Pass JSON to frontend
+    return {
+        "company_details": new_company,
+        "prediction": gradio_output_json
+    }
+
+@router.post("/", response_model=schemas.Company)
+async def create_company(company: schemas.CompanyCreate, db: Session = Depends(dependencies.get_db)):
+    return crud.create_company(db=db, company=company)
