@@ -7,6 +7,9 @@ class CompanyBase(BaseModel):
     location: str
     established_year: int
     description: Optional[str] = None
+    target_market: Optional[str] = None   # New field
+    technology: Optional[str] = None      # New field
+    revenue_stream: Optional[str] = None  # New field
 
 class CompanyCreate(CompanyBase):
     pass
@@ -17,9 +20,12 @@ class CompanyUpdate(BaseModel):
     location: Optional[str] = None
     established_year: Optional[int] = None
     description: Optional[str] = None
+    target_market: Optional[str] = None   # New field
+    technology: Optional[str] = None      # New field
+    revenue_stream: Optional[str] = None  # New field
 
 class Company(CompanyBase):
     id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True

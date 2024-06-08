@@ -12,3 +12,6 @@ class Company(Base):
     location = Column(String, index=True)
     established_year = Column(Integer, index=True)
     description = Column(String, index=True)
+    target_market = Column(String, index=True)  # New field
+    technology = Column(String, index=True)     # New field
+    revenue_stream = Column(String, index=True) # New field
