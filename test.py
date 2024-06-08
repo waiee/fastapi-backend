@@ -36,3 +36,16 @@
 # #     if items_id >= len(items_list) or items_id < 0:
 # #         raise HTTPException(status_code=404, detail="Item not found")
 # #     return items_list[items_id]
+
+from sqlalchemy import create_engine
+
+# Replace 'test.db' with the full path to your database file if needed
+db_url = "sqlite:///test.db"
+
+engine = create_engine(db_url)
+connection = engine.connect()
+
+result = connection.execute("SELECT 1")
+print(result.fetchone())
+
+connection.close()
