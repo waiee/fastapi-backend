@@ -11,7 +11,7 @@ class CompanyBase(BaseModel):
 class CompanyCreate(CompanyBase):
     pass
 
-class CompanyUpdate(CompanyBase):
+class CompanyUpdate(BaseModel):
     name: Optional[str] = None
     sector: Optional[str] = None
     location: Optional[str] = None

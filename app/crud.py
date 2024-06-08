@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from . import models, schemas
+from app import models, schemas
 
 def create_company(db: Session, company: schemas.CompanyCreate):
     db_company = models.Company(
