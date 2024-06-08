@@ -24,7 +24,7 @@ class Company(CompanyBase):
         orm_mode: True
 
 class GradioOutput(BaseModel):
-    output: str  # Assuming the Gradio output is a string, adjust based on actual output structure
+    output: str  # Adjust based on the actual Gradio output
 
     class Config:
         orm_mode = True
