@@ -1,51 +1,31 @@
-# from fastapi import FastAPI, HTTPException
-# from pydantic import BaseModel
+# from gradio_client import Client
 
-# app = FastAPI()
+# # Initialize the client with the app name
+# client = Client("anasmarz/penat")
 
-# class Item(BaseModel):
-#     text: str = None
-#     is_done: bool = False
+# # Call the /lambda endpoint (assuming no parameters are needed)
+# lambda_response = client.predict(
+#     api_name="/lambda"
+# )
+# print("Lambda Response:", lambda_response)
 
-# @app.get("/")
-# def root():
-#     return {"Testing": "123"}
+# # Call the /predict endpoint with the specified parameters
+# predict_response = client.predict(
+#     market_sector="Fintech",  # market_sector
+#     target_market="Merchant",  # target_market
+#     revenue_stream="Product",  # revenue_stream
+#     budget="RM30000",  # budget
+#     technology_used="solana, rust",  # technology_used
+#     temperature=0.9,  # temperature
+#     max_new_tokens=3008,  # max_new_tokens
+#     top_p=0.9,  # top_p
+#     repetition_penalty=1.2,  # repetition_penalty
+#     api_name="/predict"  # api_name
+# )
+# print("Predict Response:", predict_response)
 
-# # Global list to store items
-# items_list = []
-# @app.post("/items")
-# def create_item(items: Item):
-#     items_list.append(items)
-#     return items_list
-
-# @app.get("/items/{items_id}")
-# def get_item(items_id: int) -> Item:
-#     if items_id >= len(items_list) or items_id < 0:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     return items_list[items_id]
-
-# # # Global list to store items
-# # items_list = []
-# # @app.post("/items")
-# # def create_item(items: str):
-# #     items_list.append(items)
-# #     return items_list
-
-# # @app.get("/items/{items_id}")
-# # def get_item(items_id: int):
-# #     if items_id >= len(items_list) or items_id < 0:
-# #         raise HTTPException(status_code=404, detail="Item not found")
-# #     return items_list[items_id]
-
-from sqlalchemy import create_engine
-
-# Replace 'test.db' with the full path to your database file if needed
-db_url = "sqlite:///test.db"
-
-engine = create_engine(db_url)
-connection = engine.connect()
-
-result = connection.execute("SELECT 1")
-print(result.fetchone())
-
-connection.close()
+# # Call the /cleanup endpoint (assuming no parameters are needed)
+# cleanup_response = client.predict(
+#     api_name="/cleanup"
+# )
+# print("Cleanup Response:", cleanup_response)
