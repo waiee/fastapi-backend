@@ -4,7 +4,6 @@ from typing import List
 from app import crud, schemas, dependencies
 from app.dependencies import SessionLocal
 from gradio_client import Client
-from app.schemas import PredictionResult
 import json
 
 router = APIRouter()
@@ -16,9 +15,52 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/companies/", response_model=schemas.Company)
-def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db)):
-    return crud.create_company(db=db, company=company)
+@@router.post("/predict_and_create_company", response_model=schemas.GradioOutput)
+async def predict_and_create_company(
+    company: schemas.CompanyCreate,
+    db: Session = Depends(get_db)
+):
+    # Store company details in the database
+    created_company = crud.create_company(db=db, company=company)
+
+    # Extract the necessary parameters for Gradio
+    gradio_params = {
+        "market_sector": company.sector,
+        "target_market": company.target_market,
+        "revenue_stream": company.revenue_stream,
+        "budget": company.budget,
+        "technology_used": company.technology,
+        "established_year": company.established_year,  # Pass established_year to Gradio
+        "temperature": 0.9,
+        "max_new_tokens": 2048,
+        "top_p": 0.9,
+        "repetition_penalty": 1.2
+    }
+
+    try:
+        # Pass company details to Gradio for processing
+        gradio_client = Client("anasmarz/penat")
+        gradio_output = gradio_client.predict(**gradio_params, api_name="/predict")
+
+        # Try to parse the Gradio output from string to JSON
+        try:
+            gradio_output_json = json.loads(gradio_output)
+        except json.JSONDecodeError as e:
+            raise HTTPException(status_code=500, detail=f"Failed to parse Gradio output: {e}")
+
+        # Validate the Gradio output JSON in FastAPI Swagger
+        required_fields = ["market_sector", "target_market", "revenue_stream", "budget", "technology_used"]
+        missing_fields = [field for field in required_fields if field not in gradio_output_json]
+
+        if missing_fields:
+            raise HTTPException(status_code=500, detail=f"Gradio output is missing required fields: {missing_fields}")
+
+        # Return the Gradio output as a validated JSON structure
+        return gradio_output_json
+
+    except Exception as e:
+        print(f"Error in predict_and_create_company: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process Gradio output")
 
 @router.get("/companies/", response_model=List[schemas.Company])
 def read_companies(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
@@ -45,50 +87,3 @@ def delete_company(company_id: int, db: Session = Depends(get_db)):
     if db_company is None:
         raise HTTPException(status_code=404, detail="Company not found")
     return crud.delete_company(db=db, company_id=company_id)
-
-@router.post("/predict", response_model=PredictionResult)
-async def predict_from_gradio(
-    market_sector: str,
-    target_market: str,
-    revenue_stream: str,
-    budget: str,
-    technology_used: str,
-    temperature: float = 0.9,
-    max_new_tokens: int = 2048,
-    top_p: float = 0.9,
-    repetition_penalty: float = 1.2
-):
-    # Pass company details to Gradio for processing
-    gradio_client = Client("anasmarz/penat")
-    gradio_output = gradio_client.predict(
-        market_sector=market_sector,
-        target_market=target_market,
-        revenue_stream=revenue_stream,
-        budget=budget,
-        technology_used=technology_used,
-        temperature=temperature,
-        max_new_tokens=max_new_tokens,
-        top_p=top_p,
-        repetition_penalty=repetition_penalty,
-        api_name="/predict"
-    )
-    
-    # Log Gradio output for debugging
-    print("Gradio output:", gradio_output)
-    
-    # Try to parse the Gradio output from string to JSON
-    try:
-        gradio_output_json = json.loads(gradio_output)
-    except json.JSONDecodeError:
-        print("Gradio output is not valid JSON:", gradio_output)
-        raise HTTPException(status_code=500, detail="Failed to parse Gradio output")
-
-    # Validate the Gradio output JSON in FastAPI Swagger
-    required_fields = ["market_sector", "target_market", "revenue_stream", "budget", "technology_used", "temperature", "max_new_tokens", "top_p", "repetition_penalty"]
-    missing_fields = [field for field in required_fields if field not in gradio_output_json]
-    
-    if missing_fields:
-        print("Gradio output is missing required fields:", missing_fields)
-        raise HTTPException(status_code=500, detail=f"Gradio output is missing required fields: {missing_fields}")
-
-    return gradio_output_json
