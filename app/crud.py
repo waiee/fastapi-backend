@@ -13,7 +13,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return db_user 
 
 def update_user_sensitive(db: Session, user_id: int, user_update: schemas.UserUpdateSensitive):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
