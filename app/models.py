@@ -11,17 +11,15 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
+    username = Column(String, index=True)
     hashed_password = Column(String)
-
-    # New fields
-    company_name = Column(String, nullable=True)
+    company_name = Column(String, index=True, nullable=True)
     company_sector = Column(String, nullable=True)
     location = Column(String, nullable=True)
     established_year = Column(Integer, nullable=True)
     description = Column(String, nullable=True)
 
-Base.metadata.create_all(engine)
 
+Base.metadata.create_all(engine)
 

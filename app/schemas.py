@@ -3,10 +3,9 @@ from typing import Optional
 
 class UserBase(BaseModel):
     email: str
-    password: str
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserUpdateSensitive(BaseModel):
     email: Optional[str] = None
