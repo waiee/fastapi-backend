@@ -7,8 +7,17 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    company_name: str
+    company_sector: str
+    location: str
+    established_year: int
+    description: str
 
-class UserUpdate(BaseModel):
+class UserUpdateSensitive(BaseModel):
+    email: Optional[str] = None
+    password: Optional[str] = None
+
+class UserUpdateNonSensitive(BaseModel):
     company_name: Optional[str] = None
     company_sector: Optional[str] = None
     location: Optional[str] = None
