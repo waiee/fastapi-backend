@@ -14,6 +14,8 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+
+    # New fields
     company_name = Column(String, nullable=True)
     company_sector = Column(String, nullable=True)
     location = Column(String, nullable=True)
