@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import company, gradio
+from app.routers import company, company
 from app.dependencies import engine
 from app.models import Base
 
@@ -10,4 +10,3 @@ app = FastAPI()
 
 app.include_router(company.router)
 app.include_router(company.router, prefix="/companies", tags=["companies"])
-app.include_router(gradio.router) 
