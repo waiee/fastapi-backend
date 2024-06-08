@@ -178,4 +178,4 @@ async def hello():
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(main)
+    uvicorn.run(app)
