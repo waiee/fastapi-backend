@@ -176,6 +176,12 @@ async def get_data():
 async def hello():
     return {"hello": "anjing la vercel"}
 
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app)
