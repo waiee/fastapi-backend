@@ -147,7 +147,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-data = {
+data: Dict[str, Dict[str, str]] = {
     '*Phase 1 – Q1 & Q2 (Initial Setup):': {
         'Key Activities & Initiatives:': '\n1. Set up company operations, HR processes, financial systems, and legal structures\n2. Conduct SWOT analysis, Porter’s Five Forces analysis, and competitive landscape assessment\n3. Develop value proposition, minimum viable product (MVP), and business plan\n4. Recruit founders, board members, advisors, and key personnel, focusing on those experienced in blockchain, Solana, Rust, and fintech industries\n5. Establish relationships with local authorities, regulatory bodies, and industry associations\n',
         'Resource Allocation:': '\n1. Hire legal, accounting, and recruitment services\n2. Allocate budget towards market research tools and analytics software\n3. Secure office space or coworking space for the team\n4. Allocate funds towards registration fees, insurance premiums, and licensing costs\n',
@@ -164,11 +164,11 @@ data = {
         'Key Activities & Initiatives:': '\n1. Finalize marketing materials, content strategy, and go-to-market strategy\n2. Partner with strategic organizations, payment gateway providers, and banks to facilitate smooth adoption among merchants\n3. Train customer support representatives and account managers\n4. Launch the product at a press event, inviting media, investors, partners, and influencers\n5. Onboard early adopter merchants and provide personalized support to help them adapt quickly\n6. Collect feedback from these early adopters, identify common issues, and iterate upon the product to fix any problems and add requested features\n7. Expand the user base gradually but steadily, engaging in targeted advertising and networking efforts to attract more merchants\n',
         'Resource Allocation:': '\n1. Increase headcount in customer support, sales, and marketing teams\n2. Invest in public relations agencies to maximize visibility\n3. Advertise on platforms frequented by merchants and small businesses\n4. Attend industry events, conferences, and trade shows to expand the brand presence and generate leads\n',
         'Risk Management:': '\n1. Monitor ongoing performance closely, making adjustments as needed to maintain growth momentum\n2. Continuously engage with stakeholders to keep them informed about updates, milestones, and challenges faced by the startup\n3. Evaluate competitors regularly, identifying opportunities to differentiate further\n',
-        'KPIs & Metrics:': '\n1. Growth rate in active merchants using the platform\n2. Customer satisfaction ratings (Net Promoter Score [NPS] and overall sentiment analysis)\n3. Sales conversion rates from lead generation activities\n4. Operational expenses compared to revenue generated</s>'
+        'KPIs & Metrics:': '\n1. Growth rate in active merchants using the platform\n2. Customer satisfaction ratings (Net Promoter Score [NPS] and overall sentiment analysis)\n3. Sales conversion rates from lead generation activities\n4. Operational expenses compared to revenue generated'
     }
 }
 
-@app.get("/data", response_model=Dict)
+@app.get("/data", response_model=Dict[str, Dict[str, str]])
 async def get_data():
     return data
 
