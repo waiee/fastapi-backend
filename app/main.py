@@ -1,8 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from gradio_client import Client
+from mangum import Mangum
 
 app = FastAPI()
+handler = Mangum(app)
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import create_engine, Column, Integer, String, Text
@@ -16,8 +18,6 @@ DATABASE_URL = "sqlite:///./test.db"  # Update with your database URL
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
-app = FastAPI()
 
 class Investor(Base):
     __tablename__ = "investors"
