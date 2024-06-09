@@ -9,7 +9,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/",
+            "dest": "/main.py",
             "methods": [
                 "GET",
                 "POST",
@@ -19,5 +19,6 @@
                 "OPTIONS"
             ]
         }
-    ]
+    ],
+    "env": {"APP_MODULE": "main:app"}
 }
