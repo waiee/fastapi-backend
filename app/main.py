@@ -172,16 +172,16 @@ data: Dict[str, Dict[str, str]] = {
 async def get_data():
     return data
 
-@app.get('/')
-async def hello():
-    return {"hello": "anjing la vercel"}
+# @app.get('/')
+# async def hello():
+#     return {"hello": "anjing la vercel"}
 
-import os 
-from dotenv import load_dotenv
+# import os 
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app)
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app)
